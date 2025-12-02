@@ -1,8 +1,7 @@
 from sqlalchemy import ForeignKey, Column, Integer, String, MetaData
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
-
-# naming convention (keeps Alembic happy)
+# Define naming convention for constraints to avoid issues with Alembic
 convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
 }
@@ -21,22 +20,14 @@ class Company(Base):
         return f"<Company {self.name}>"
 
     def give_freebie(self, dev, item_name, value):
-        """
-        Create a Freebie instance for this company and the provided dev.
-        Returns the new Freebie (not automatically committed).
-        """
+        """Create and return a new Freebie given to `dev` with `item_name` and `value`."""
         new_freebie = Freebie(item_name=item_name, value=value, dev=dev, company=self)
-        # Append to relationship so SQLAlchemy links both sides
         self.freebies.append(new_freebie)
         return new_freebie
 
     @classmethod
     def oldest_company(cls, session=None):
-        """
-        Returns the Company instance with the earliest founding_year.
-        Requires a SQLAlchemy session argument (recommended).
-        Example: Company.oldest_company(session)
-        """
+        """Return the Company with the earliest founding_year."""
         if session is None:
             raise RuntimeError("Company.oldest_company requires a SQLAlchemy session. Call Company.oldest_company(session).")
         return session.query(cls).order_by(cls.founding_year.asc()).first()
@@ -69,10 +60,7 @@ class Dev(Base):
         return False
 
     def give_away(self, to_dev, freebie) -> bool:
-        """
-        Transfer ownership of `freebie` to `to_dev` only if this dev currently owns it.
-        Returns True if the transfer happened, False otherwise.
-        """
+        """Give away a freebie to another dev. Return True if successful."""
         if freebie in getattr(self, "freebies", []):
             freebie.dev = to_dev
             return True
