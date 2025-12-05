@@ -93,7 +93,6 @@ def main():
                 print("Created:", dev_summary(d))
 
             elif choice == "6":
-                # Give freebie: choose company, dev, item_name, value
                 comps = list_companies(session)
                 for c in comps:
                     print(company_summary(c))
@@ -121,7 +120,6 @@ def main():
                 print("Created freebie:", freebie_summary(fb))
 
             elif choice == "7":
-                # Transfer freebie
                 devs = list_devs(session)
                 for d in devs:
                     print(dev_summary(d))
@@ -130,7 +128,6 @@ def main():
                 if not from_dev:
                     print("Dev not found.")
                     continue
-                # show freebies owned by from_dev
                 owned = from_dev.freebies
                 if not owned:
                     print(f"{from_dev.name} has no freebies to give.")
@@ -143,7 +140,6 @@ def main():
                     print("That freebie is not owned by the giver.")
                     continue
 
-                # choose recipient
                 for d in devs:
                     print(dev_summary(d))
                 to_id = input_int("Recipient Dev ID: ")
@@ -174,9 +170,7 @@ def main():
                     print(f"No — {dev.name} has not received '{item}'.")
 
             elif choice == "9":
-                # Oldest company (requires DB query)
-                # Use the session; call the classmethod we wrote on Company
-                from models import Company  # local import to ensure class is available
+                from models import Company  
                 oldest = Company.oldest_company(session)
                 if oldest:
                     print("Oldest company:", company_summary(oldest))
